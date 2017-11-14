@@ -76,5 +76,6 @@ class WebSocketBadStatusException(WebSocketException):
 
     def __init__(self, message, status_code):
         super(WebSocketBadStatusException, self).__init__(
-            message % status_code)
+            '%i - %s' % (status_code, message))
         self.status_code = status_code
+        self.message = message

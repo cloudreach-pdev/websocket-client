@@ -22,7 +22,7 @@ Copyright (C) 2010 Hiroki Ohtani(liris)
 import hashlib
 import hmac
 import os
-
+import http
 import six
 
 from ._cookiejar import SimpleCookieJar
@@ -109,6 +109,7 @@ def _get_handshake_headers(resource, host, port, options):
             header = map(": ".join, header.items())
         headers.extend(header)
 
+
     server_cookie = CookieJar.get(host)
     client_cookie = options.get("cookie", None)
 
@@ -124,9 +125,13 @@ def _get_handshake_headers(resource, host, port, options):
 
 
 def _get_resp_headers(sock, success_status=101):
-    status, resp_headers = read_headers(sock)
+    response = http.client.HTTPResponse(sock)
+    response.begin()
+    status = response.status
+    resp_headers = {k.lower(): v for k, v in response.getheaders()}
     if status != success_status:
-        raise WebSocketBadStatusException("Handshake status %d", status)
+        message = response.read().decode('utf-8').strip()
+        raise WebSocketBadStatusException(message, status)
     return status, resp_headers
 
 _HEADERS_TO_CHECK = {
