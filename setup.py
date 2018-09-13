@@ -3,7 +3,7 @@ import sys
 from setuptools import setup
 import pkg_resources
 
-VERSION = "0.45.0"
+VERSION = "0.45.0-cloudreach"
 NAME = "websocket_client"
 
 install_requires = ["six"]
